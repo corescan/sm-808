@@ -1,7 +1,6 @@
 # SM-808 1.0.0
-### author C. Orescan
 
-SM-808 1.0.0 by corescan is a simple drum machine which offers a sequencing cli and *visual output only*. It is a solution written in [Node.js](http://nodejs.org) to the challenge presented by https://github.com/splice/sm-808 and primarily a proof of concept for the sequencer logic within. It is not (at least in this iteration) intended to play [audible] music.
+SM-808 1.0.0 is a simple drum machine which offers a sequencing cli and *visual output only*. It is a solution written in [Node.js](http://nodejs.org) to the challenge presented by https://github.com/splice/sm-808 and primarily a proof of concept for the sequencer logic within. It is not (at least in this iteration) intended to play [audible] music.
 
 This package offers a user the ability to:
 1. Play a pre-set demo sequence.
