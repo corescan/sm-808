@@ -50,8 +50,23 @@ function promptTheBeat(defaults) {
         beat.bpm = res.in;
         return inquirer.prompt({
             name: 'in',
+            type: 'list',
             default: beat.subdivision,
-            message: `beat value of 1 sequencer step? For 1/x note, use x:`
+            message: `rhythmic value of 1 sequencer step?`,
+            choices: [
+                {
+                    name: '1/4',
+                    value: 4
+                },
+                {
+                    name: '1/8',
+                    value: 8
+                },
+                {
+                    name: '1/16',
+                    value: 16
+                }
+            ]   
         })
     }).then((res) => {
         beat.subdivision = res.in;
