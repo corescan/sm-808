@@ -65,46 +65,50 @@ function dropTheBeat(beat, defaults, iterations) {
     var sequenceStep = 0;
     var iterationCount = 0;
 
-    /**
-     * Outputs current step and advances the sequence.
-     * Attempts to account for the time drag between this step and last by adjusting STEP_DURATION.
-     */
-    function stepSequence() {
-        // output the sequence state for current step
-        process.stdout.write(output[sequenceStep]);
+    return new Promise((resolve) => {
+        /**
+         * Outputs current step and advances the sequence.
+         * Attempts to account for the time drag between this step and last by adjusting STEP_DURATION.
+         */
+        function stepSequence() {
+            // output the sequence state for current step
+            process.stdout.write(output[sequenceStep]);
 
-        // increment the step
-        if (sequenceStep === seqLen - 1) {
-            // Completed last step. Reset the sequence.
-            sequenceStep = 0;
-            iterationCount++;
-            process.stdout.write('\n');
-            if (iterationCount >= iterations) {
-                // end the loop
-                return;
+            // increment the step
+            if (sequenceStep === seqLen - 1) {
+                // Completed last step. Reset the sequence.
+                sequenceStep = 0;
+                iterationCount++;
+                process.stdout.write('\n');
+                if (iterationCount >= iterations) {
+                    // end the loop
+                    console.log('RESOLVE?');
+                    resolve('DONE');
+                    return;
+                }
+            } else {
+                sequenceStep++;
             }
-        } else {
-            sequenceStep++;
-        }
-        actualTime = new Date().getTime() - startTime;
+            actualTime = new Date().getTime() - startTime;
 
-        // actualTime will always be = if not > than expectedTime, due to the potential lag in `setTimeout` function.
-        var diff = actualTime - expectedTime;
-        // console.warn("NEXT STEP:", STEP_DURATION - diff); //debug
+            // actualTime will always be = if not > than expectedTime, due to the potential lag in `setTimeout` function.
+            var diff = actualTime - expectedTime;
+            // console.warn("NEXT STEP:", STEP_DURATION - diff); //debug
 
-        // call sequence again using time differential to improve metronome accuracy.
-        setTimeout(stepSequence, STEP_DURATION - diff);
-        
-        // increment expected time
-        expectedTime += STEP_DURATION;
-    }
+            // call sequence again using time differential to improve metronome accuracy.
+            setTimeout(stepSequence, STEP_DURATION - diff);
+            
+            // increment expected time
+            expectedTime += STEP_DURATION;
+        } 
 
-    /**
-     * Begin the sequence;
-     */
-    startTime = new Date().getTime();
-    expectedTime = 0;
-    stepSequence();
+        /**
+         * Begin the sequence;
+         */
+        startTime = new Date().getTime();
+        expectedTime = 0;
+        stepSequence();
+    });
 }
 
 module.exports = dropTheBeat;

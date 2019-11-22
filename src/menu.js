@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const defaults = require('./defaults');
 const promptTheBeat = require('./prompt-the-beat');
 const dropTheBeat = require('./drop-the-beat');
+const applause = require('./applause');
 
 /**
  * Display the beat configuration for user review.
@@ -39,8 +40,12 @@ function readyTheBeat(beat) {
             mainMenu();
         }
     }).then((res) => {
-         dropTheBeat(beat, defaults, res.iterations);
-    })
+        return dropTheBeat(beat, defaults, res.iterations);
+    }).then(() => {
+        return applause();
+    }).then(() => {
+        mainMenu();
+    });
 }
 
 /**
