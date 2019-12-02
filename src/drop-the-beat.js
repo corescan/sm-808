@@ -114,11 +114,11 @@ function dropTheBeat(beat, defaults, iterations) {
                 setTimeout(() => {
                     // return some data about the completed sequence process
                     resolve({
-                        totalRunningTime: `${(new Date().getTime() - startTime) / 1000} ms`,
+                        totalRunningTime: `${(new Date().getTime() - startTime) / 1000} seconds`,
                         totalNumberOfSteps: totalSteps,
-                        calculatedStepDuration: `${STEP_DURATION} ms`,
-                        averageActualStepDuration: `${average(stepDurationHistory)} ms`,
-                        averageStepTimeout: `${average(timeoutHistory)} ms`
+                        calculatedStepDuration: `${STEP_DURATION}ms`,
+                        averageActualStepDuration: `${average(stepDurationHistory)}ms`,
+                        averageStepTimeout: `${average(timeoutHistory)}ms`
                     });
                 }, timeout);
                 return;
