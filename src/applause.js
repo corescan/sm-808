@@ -1,5 +1,5 @@
 /**
- * The computer appreciates you.
+ * Output a few lines of "applause".
  */
 module.exports = function() {
     const applause = "*** APPLAUSE ***"

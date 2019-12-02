@@ -10,7 +10,7 @@ const applause = require('./applause');
  * 
  * @param {Object} beat
  */
-function readyTheBeat(beat) {
+function confirmTheBeat(beat) {
     /**
      * Stringify the sequence arrays for display purposes.
      * Make a copy of beat sequence so original beat object is not altered.
@@ -30,22 +30,31 @@ function readyTheBeat(beat) {
         default: true,
         message: `Play ${beat.title}?`
     }).then((res) => {
+        let defaultLoopCount = 8;
         if (res.in) {
             return inquirer.prompt({
                 name: 'iterations',
                 message: 'How many loops?',
-                default: '16'
+                type: 'number',
+                default: defaultLoopCount,
+                filter: input => {
+                    if (typeof input === 'number' && input !== NaN && input > 0){
+                        return input;
+                    }
+                    return defaultLoopCount;
+                }
+            }).then((res) => {
+                return dropTheBeat(beat, defaults, res.iterations)
+            }).then((performanceSummary) => {
+                console.table(performanceSummary)
+                return applause();
             });
-        } else {
-            mainMenu();
         }
-    }).then((res) => {
-        return dropTheBeat(beat, defaults, res.iterations);
-    }).then(() => {
-        return applause();
-    }).then(() => {
-        mainMenu();
-    });
+
+        return Promise.resolve();
+    }).catch((err) => {
+        console.error(err);
+    })
 }
 
 /**
@@ -74,18 +83,18 @@ function mainMenu() {
     }).then((res) => {
         switch (res.main_menu) {
             case 'demo1':
-                readyTheBeat(defaults.FOUR_ON_THE_FLOOR, defaults)
-                break;
+                return confirmTheBeat(defaults.FOUR_ON_THE_FLOOR, defaults)
             case 'demo2':
-                readyTheBeat(defaults.STRAIGHT_ROCK_SLOW, defaults)
-                break;
+                return confirmTheBeat(defaults.STRAIGHT_ROCK_SLOW, defaults)
             case 'new_beat':
-                promptTheBeat(defaults)
-                    .then((beat) => readyTheBeat(beat));
-                break;
+                return promptTheBeat(defaults)
+                    .then((beat) => confirmTheBeat(beat));
             default:
-                break;
+                return Promise.resolve();
         }
+    }).finally(() => {
+        // loop back to top of the menu
+        mainMenu();
     });
 }
 

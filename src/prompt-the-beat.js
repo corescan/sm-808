@@ -1,3 +1,8 @@
+/**
+ * prompt-the-beat contains the logic around collecting user input for creating a 
+ * new beat sequence.
+ */
+
 const inquirer = require('inquirer');
 
 /**
