@@ -3,6 +3,7 @@ const defaults = require('./defaults');
 const promptTheBeat = require('./prompt-the-beat');
 const dropTheBeat = require('./drop-the-beat');
 const applause = require('./applause');
+const average = require('./array-average');
 
 /**
  * Display the beat configuration for user review.
@@ -45,12 +46,21 @@ function confirmTheBeat(beat) {
                 }
             }).then((res) => {
                 return dropTheBeat(beat, defaults, res.iterations)
-            }).then((performanceSummary) => {
-                console.table(performanceSummary)
+            }).then((env) => {
+                // display some performance analytics
+                const millisToNanosFactor = 1000000
+                console.table({
+                    totalRunningTime: `${Number(env.finishingTime - env.startTime) / (millisToNanosFactor * 1000)} seconds`,
+                    totalNumberOfSteps: env.stepCount,
+                    calculatedStepDuration: `${Number(env.stepDuration) / millisToNanosFactor}ms`,
+                    averageActualStepDuration: `${average(env.stepDurationHistory) / millisToNanosFactor}ms`,
+                    averageStepTimeout: `${average(env.timeoutHistory)}ms`
+                });
                 return applause();
             });
         }
 
+        // else
         return Promise.resolve();
     }).catch((err) => {
         console.error(err);

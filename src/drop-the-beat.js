@@ -1,14 +1,16 @@
-const average = require('./array-average');
-
 /**
  * drop-the-beat contains the main sequencing logic including
  * timing and the visual (console) output.
  */
 
+const sequenceTimer = require('./sequenceTimers/sequenceTimeout');
+
 /**
  * Generate the console output for each step of the sequence
  * @param {Object} seq
  * @param {Number} len 
+ * 
+ * @returns {Array<Array<String>>}
  */
 function prepareConsoleOutput(seq, len) {
     /**
@@ -37,7 +39,7 @@ function prepareConsoleOutput(seq, len) {
 }
 
 /**
- * Displays output for a sequence in rhythym.
+ * Configure sequence environment variables and initiate the sequence timing function.
  * 
  * @param {Object} beat         object containing the beat information and sequence
  * @param {Object} defaults     some default settings
@@ -47,99 +49,41 @@ function dropTheBeat(beat, defaults, iterations) {
     
     const bpm = beat.bpm;
     const seq = beat.sequence;
-    const seqLen = beat.length;
     const subdiv = beat.subdivision;
+    const millisToNanosFactor = 1000000;
 
-    /** 
-     * Calculate the duration in millis of one sequence step
-     * 
-     * Divide 60,000 milliseconds per minute across X number of beats per minute.
-     * Multiply this value by the fraction of one beat represented by one sequence step.
-     * */ 
-    const STEP_DURATION = ( 60000 / bpm ) * ( defaults.BEAT_VALUE / subdiv );
+    const SEQUENCE_ENV = {
+        seqLen: beat.length,
+
+        /** 
+         * Calculate the duration in nanos of one sequence step
+         * 
+         * Divide 60,000 milliseconds per minute across X number of beats per minute. Convert to nanos for BigInt.
+         * Multiply this value by the fraction of one beat represented by one sequence stemillip.
+         * */ 
+        stepDuration: BigInt( ( 60000 / bpm ) * ( defaults.BEAT_VALUE / subdiv ) * millisToNanosFactor),
     
-    // prepare the visual sequence output
-    const output = prepareConsoleOutput(seq, seqLen);
+        // prepare the visual sequence output
+        output: prepareConsoleOutput(seq, beat.length),
 
-    // "metronome" timing variables to help schedule accuracy of each sequence step
-    let startTime;
-    let expectedTime;       // expected time-elapsed
-    let actualTime;         // actual time-elapsed
-    let previousStepTime;   // the time at which the last step ran
+        // time-tracking variables help schedule accuracy of each sequence step
+        startTime: 0,
+        expectedTime: 0,                // expected time-elapsed
+        actualTime: 0,                  // actual time-elapsed
 
-    // refers to sequencer step
-    let sequenceStep = 0;
-    let iterationCount = 0;
+        // sequence step & iteration counters
+        currentStep: 0,                 // the current sequencer step; maximum value === beat.length - 1
+        iterationCount: 0,              // iterations completed
+        iterationTotal: iterations,     // how many iterations to complete
 
-    // analytics vars
-    let timeoutHistory = [];            // collect the setTimeout param of each sequence step for analytics.
-    let stepDurationHistory = [];       // collect the time diff between "this step" and "previous step"
-    let totalSteps = 0;
+        // analytics vars
+        timeoutHistory: [],             // collect the setTimeout param of each sequence step for analytics.
+        stepDurationHistory: [],        // collect the time diff between "this step" and "previous step"
+        stepCount: 0,                   // how many steps have been completed across all iterations
+        previousStepTime: 0             // the time at which the last step ran
+    }
 
-    return new Promise((resolve) => {
-        /**
-         * Outputs current step and advances the sequence.
-         * Attempts to account for the time drag between this step and last by adjusting STEP_DURATION.
-         */
-        function stepSequence() {
-            // output the sequence state for current step
-            process.stdout.write(output[sequenceStep]);
-
-            // increment the step
-            if (sequenceStep === seqLen - 1) {
-                // Completed last step. Reset the sequence.
-                sequenceStep = 0;
-                iterationCount++;
-
-                // print a new line after each completed sequence.
-                process.stdout.write('\n');
-
-            } else {
-                sequenceStep++;
-            }
-
-            // read the actualTime elapsed.
-            let now = new Date().getTime();
-            actualTime = now - startTime;
-
-            // actualTime will always be = if not > than expectedTime, due to the lag in `setTimeout` function.
-            let diff = actualTime - expectedTime;
-            let timeout = STEP_DURATION - diff
-            timeoutHistory[totalSteps] = timeout;
-            stepDurationHistory[totalSteps++] = now - previousStepTime;
-
-            // iterations completed. end "playback".
-            if (iterationCount >= iterations) {
-                // resolve the promise after step duration completes
-                setTimeout(() => {
-                    // return some data about the completed sequence process
-                    resolve({
-                        totalRunningTime: `${(new Date().getTime() - startTime) / 1000} seconds`,
-                        totalNumberOfSteps: totalSteps,
-                        calculatedStepDuration: `${STEP_DURATION}ms`,
-                        averageActualStepDuration: `${average(stepDurationHistory)}ms`,
-                        averageStepTimeout: `${average(timeoutHistory)}ms`
-                    });
-                }, timeout);
-                return;
-            }
-            
-            // call sequence again using time differential to improve metronome accuracy.
-            setTimeout(stepSequence, timeout);
-            
-            // increment expected time
-            expectedTime += STEP_DURATION;
-            previousStepTime = now;
-        } 
-
-        /**
-         * Begin the sequence;
-         */
-        startTime = new Date().getTime();
-        expectedTime = 0;
-        previousStepTime = new Date().getTime();
-        stepSequence();
-    });
+    return sequenceTimer(SEQUENCE_ENV);
 }
 
 module.exports = dropTheBeat;
