@@ -54,7 +54,7 @@ function confirmTheBeat(beat) {
                     totalNumberOfSteps: env.stepCount,
                     calculatedStepDuration: `${Number(env.stepDuration) / millisToNanosFactor}ms`,
                     averageActualStepDuration: `${average(env.stepDurationHistory) / millisToNanosFactor}ms`,
-                    averageStepTimeout: `${average(env.timeoutHistory)}ms`
+                    // averageStepTimeout: env.timeoutHistory.length ? `${average(env.timeoutHistory)}ms` : 'N/A'
                 });
                 return applause();
             });

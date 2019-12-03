@@ -37,12 +37,17 @@ module.exports = (env) => new Promise((resolve) => {
 
         // save timing data for this step
         env.timeoutHistory[env.stepCount] = timeout;
-        env.stepDurationHistory[env.stepCount++] = Number(now - env.previousStepTime);
+        if (env.stepCount > 0) {
+            env.timeoutHistory[env.stepCount-1] = timeout;
+            env.stepDurationHistory[env.stepCount-1] = Number(now - env.previousStepTime);
+        }
 
         // iterations completed; end "playback".
         if (env.iterationCount >= env.iterationTotal) {
             // resolve the promise after step duration completes
             setTimeout(() => {
+                // increment stepCount so it is not off by 1.
+                env.stepCount++;
                 // return environment data
                 env.finishingTime = process.hrtime.bigint();
                 resolve(env);
@@ -53,6 +58,7 @@ module.exports = (env) => new Promise((resolve) => {
         // increment expected time
         env.expectedTime += env.stepDuration;
         env.previousStepTime = now;
+        env.stepCount++;
         
         // call sequence again using time differential to improve metronome accuracy.
         setTimeout(() => {

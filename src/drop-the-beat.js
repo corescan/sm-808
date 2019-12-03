@@ -3,7 +3,11 @@
  * timing and the visual (console) output.
  */
 
-const sequenceTimer = require('./sequenceTimers/sequenceTimeout');
+/**
+ * Consider playing with multiple implementations of the sequence timer.
+ */
+const sequenceTimer = require('./sequenceTimers/sequenceLoop');
+// const sequenceTimer = require('./sequenceTimers/sequenceTimeout');
 
 /**
  * Generate the console output for each step of the sequence
