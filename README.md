@@ -21,4 +21,5 @@ This package offers a user the ability to:
 3. Have fun.
 
 ## More...
-If you'd like to play more, see [Bombbeats](https://github.com/corescan/bombbeats) for a web-based GUI.
+If you'd like to play more, head over to [Bombbeats](https://corescan.github.io/bombbeats/) for a web-based GUI.
+Check out the code [here](https://github.com/corescan/bombbeats).
