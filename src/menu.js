@@ -2,8 +2,8 @@ const inquirer = require('inquirer');
 const defaults = require('./defaults');
 const promptTheBeat = require('./prompt-the-beat');
 const dropTheBeat = require('./drop-the-beat');
-const applause = require('./applause');
-const average = require('./array-average');
+const applause = require('./util/applause');
+const average = require('./util/array-average');
 
 /**
  * Display the beat configuration for user review.

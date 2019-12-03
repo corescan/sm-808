@@ -1,11 +1,8 @@
 /**
- * drop-the-beat contains the main sequencing logic including
- * timing and the visual (console) output.
+ * drop-the-beat prepares environment data and visual output to drop into a sequence timer.
  */
 
-/**
- * Consider playing with multiple implementations of the sequence timer.
- */
+// Consider playing with different implementations of the sequence timer.
 const sequenceTimer = require('./sequenceTimers/sequenceLoop');
 // const sequenceTimer = require('./sequenceTimers/sequenceTimeout');
 
@@ -81,12 +78,13 @@ function dropTheBeat(beat, defaults, iterations) {
         iterationTotal: iterations,     // how many iterations to complete
 
         // analytics vars
-        timeoutHistory: [],             // collect the setTimeout param of each sequence step for analytics.
+        timeoutHistory: [],             // collect the setTimeout param of each sequence step for analytics. Only used w sequenceTimeout.js.
         stepDurationHistory: [],        // collect the time diff between "this step" and "previous step"
         stepCount: 0,                   // how many steps have been completed across all iterations
-        previousStepTime: 0             // the time at which the last step ran
+        previousStepTime: 0             // the time at which previous step ran
     }
 
+    // start the timer
     return sequenceTimer(SEQUENCE_ENV);
 }
 
