@@ -1,12 +1,13 @@
 /**
- * prompt-the-beat contains the logic around collecting user input for creating a 
+ * createBeat.js
+ * Contains the logic around collecting user input for creating a 
  * new beat sequence.
  */
 
 const inquirer = require('inquirer');
 
 /**
- * A simple method enforcing the predetermined length and numerical content of a pattern
+ * A crude method enforcing the predetermined length and numerical content of a pattern
  * @param {String} input 
  * @param {Number} beatLength 
  */
@@ -29,7 +30,7 @@ function sanitizePattern(input, beatLength) {
  * Gather params and sequence from user for a beat.
  * @param {Object} defaults
  */
-function promptTheBeat(defaults) {
+function createBeat(defaults) {
     // create the default beat object;
     const beat = {
         title: "New Beat on the Block",
@@ -109,4 +110,4 @@ function promptTheBeat(defaults) {
     });
 }
 
-module.exports = promptTheBeat;
+module.exports = createBeat;

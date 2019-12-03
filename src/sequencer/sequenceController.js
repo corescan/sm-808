@@ -1,10 +1,11 @@
 /**
- * drop-the-beat prepares environment data and visual output to drop into a sequence timer.
+ * sequenceController.js
+ * Prepares environment data and visual output to drop into a sequence timer.
  */
 
 // Consider playing with different implementations of the sequence timer.
-const sequenceTimer = require('./sequenceTimers/sequenceLoop');
-// const sequenceTimer = require('./sequenceTimers/sequenceTimeout');
+const sequenceTimer = require('./timers/sequenceLoop');
+// const sequenceTimer = require('./timers/sequenceTimeout');
 
 /**
  * Generate the console output for each step of the sequence
@@ -46,7 +47,7 @@ function prepareConsoleOutput(seq, len) {
  * @param {Object} defaults     some default settings
  * @param {Number} iterations   how many times to loop the sequence
  */
-function dropTheBeat(beat, defaults, iterations) {
+function beginSequence(beat, defaults, iterations) {
     
     const bpm = beat.bpm;
     const seq = beat.sequence;
@@ -88,4 +89,4 @@ function dropTheBeat(beat, defaults, iterations) {
     return sequenceTimer(SEQUENCE_ENV);
 }
 
-module.exports = dropTheBeat;
+module.exports = beginSequence;

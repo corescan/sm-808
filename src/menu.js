@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const defaults = require('./defaults');
-const promptTheBeat = require('./prompt-the-beat');
-const dropTheBeat = require('./drop-the-beat');
+const createBeat = require('./createBeat');
+const beginSequence = require('./sequencer/sequenceController');
 const applause = require('./util/applause');
 const average = require('./util/array-average');
 
@@ -24,7 +24,9 @@ function confirmTheBeat(beat) {
         consoleLogBeat.sequence[trackName] = JSON.stringify(consoleLogBeat.sequence[trackName])
     });
 
+    // Display the beat properties
     console.log(consoleLogBeat);
+
     return inquirer.prompt({
         name: 'in',
         type: 'confirm',
@@ -45,7 +47,7 @@ function confirmTheBeat(beat) {
                     return defaultLoopCount;
                 }
             }).then((res) => {
-                return dropTheBeat(beat, defaults, res.iterations)
+                return beginSequence(beat, defaults, res.iterations)
             }).then((env) => {
                 // display some performance analytics
                 const millisToNanosFactor = 1000000
@@ -97,7 +99,7 @@ function mainMenu() {
             case 'demo2':
                 return confirmTheBeat(defaults.STRAIGHT_ROCK_SLOW, defaults)
             case 'new_beat':
-                return promptTheBeat(defaults)
+                return createBeat(defaults)
                     .then((beat) => confirmTheBeat(beat));
             default:
                 return Promise.resolve();
